@@ -95,7 +95,8 @@ class TestFSM(unittest.TestCase):
             (5, "Green2", "Go"),
             (6, "Green3", "Go")
         ]
-        self.assertEqual([(record.clock, record.current_state, record.val) for record in self.fsm.state_history], expected_state_history)
+        self.assertEqual([(record.clock, record.current_state, record.val) for
+                          record in self.fsm.state_history], expected_state_history)
 
     def test_practical_example(self):
         fsm = FSM("Traffic Light Controller")
@@ -107,16 +108,18 @@ class TestFSM(unittest.TestCase):
         fsm.add_state("Yellow", "Caution")
 
         fsm.add_transition("Red", "Green1", 1)
-        fsm.add_transition("Green1","Green2", 1)
-        fsm.add_transition("Green2","Green3", 1)
+        fsm.add_transition("Green1", "Green2", 1)
+        fsm.add_transition("Green2", "Green3", 1)
         fsm.add_transition("Green3", "Yellow", 1)
         fsm.add_transition("Yellow", "Red", 1)
 
         fsm.set_initial_state("Red")
 
-        print(f"Initial State: {fsm.current_state.name} - Output: {fsm.current_state.output}")
+        print(f"Initial State: {fsm.current_state.name} - "
+              f"Output: {fsm.current_state.output}")
 
-        events = ["timer", "timer", "timer", "timer", "timer", "timer", "timer"]
+        events = ["timer", "timer", "timer", "timer", "timer",
+                  "timer", "timer"]
 
         expected_results = [
             ("Green1", "Go"),
@@ -131,7 +134,8 @@ class TestFSM(unittest.TestCase):
         for event, expected in zip(events, expected_results):
             output = fsm.trigger_event(event, latency=1)
             self.assertEqual((fsm.current_state.name, output), expected)
-            print(f"Event: {event}, New State: {fsm.current_state.name}, Output: {output}")
+            print(f"Event: {event}, New State: {fsm.current_state.name}, "
+                  f"Output: {output}")
 
         fsm.print_history()
 
