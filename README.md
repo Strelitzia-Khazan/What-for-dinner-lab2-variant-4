@@ -1,4 +1,4 @@
-# GROUP-NAME - lab NUMBER - variant NUMBER
+# What for dinner - lab 3 - variant 4
 
 This is an example project which demonstrates project structure and necessary
 CI checks. It is not the best structure for real-world projects, but good
@@ -6,9 +6,9 @@ enough for educational purposes.
 
 ## Project structure
 
-- `foo.py` -- implementation of `Foo` class with `hello` and `add` features.
+- `fsm.py` -- implementation of `Foo` class with `hello` and `add` features.
    Stateless.
-- `foo_test.py` -- unit and PBT tests for `Foo`.
+- `fsm_test.py` -- unit and PBT tests for `Foo`.
 
 ## Features
 
@@ -16,15 +16,22 @@ enough for educational purposes.
 
 ## Contribution
 
-- Aleksandr Penskoi (EMAIL) -- all work.
+- Lu Bin (1476683166@qq.com) -- All work.
+- Wang Yining (351432511@qq.com) -- All work.
 
 ## Changelog
 
-- 29.03.2022 - 2
-  - Add test coverage.
-- 29.03.2022 - 1
-  - Update README. Add formal sections.
-- 29.03.2022 - 0
+- 08.06.2022 - 4
+  - Add visualization functions.
+  - modify code style.
+- 07.06.2022 - 3
+  - Complete design of finite state machine.
+  - Implement tests.
+- 06.06.2022 - 2
+  - Add more function of finite state machine.
+- 05.06.2022 - 1
+  - Implement basic function of finite state machine 
+- 03.06.2022 - 0
   - Initial
 
 ## Design notes
