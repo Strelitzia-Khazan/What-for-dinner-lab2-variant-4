@@ -1,6 +1,6 @@
-# test.py
 import unittest
-from fsm import FSM
+from fsm import FSM, State
+
 
 class TestFSM(unittest.TestCase):
     def setUp(self):
@@ -8,25 +8,25 @@ class TestFSM(unittest.TestCase):
         self.fsm.add_state("Red", "Stop")
         self.fsm.add_state("Green", "Go")
         self.fsm.add_state("Yellow", "Caution")
-        self.fsm.add_transition("Red", "Green", "timer")
-        self.fsm.add_transition("Green", "Yellow", "timer")
-        self.fsm.add_transition("Yellow", "Red", "timer")
+        self.fsm.add_transition("Red", "Green", 1)
+        self.fsm.add_transition("Green", "Yellow", 1)
+        self.fsm.add_transition("Yellow", "Red", 1)
         self.fsm.set_initial_state("Red")
 
     def test_initial_state(self):
         self.assertEqual(self.fsm.current_state.name, "Red")
+        self.assertEqual(self.fsm.clock, 0)
 
     def test_state_transition(self):
-        self.assertEqual(self.fsm.trigger_event("timer"), "Go")
+        self.assertEqual(self.fsm.trigger_event("timer", latency=1), "Go")
         self.assertEqual(self.fsm.current_state.name, "Green")
-        self.assertEqual(self.fsm.trigger_event("timer"), "Caution")
+        self.assertEqual(self.fsm.clock, 2)
+        self.assertEqual(self.fsm.trigger_event("timer", latency=1), "Caution")
         self.assertEqual(self.fsm.current_state.name, "Yellow")
-        self.assertEqual(self.fsm.trigger_event("timer"), "Stop")
+        self.assertEqual(self.fsm.clock, 4)
+        self.assertEqual(self.fsm.trigger_event("timer", latency=1), "Stop")
         self.assertEqual(self.fsm.current_state.name, "Red")
-
-    def test_invalid_event(self):
-        with self.assertRaises(ValueError):
-            self.fsm.trigger_event("invalid_event")
+        self.assertEqual(self.fsm.clock, 6)
 
     def test_add_duplicate_state(self):
         with self.assertRaises(ValueError):
@@ -34,56 +34,84 @@ class TestFSM(unittest.TestCase):
 
     def test_transition_with_invalid_state(self):
         with self.assertRaises(ValueError):
-            self.fsm.add_transition("Red", "Blue", "timer")
+            self.fsm.add_transition("Red", "Blue", 1)
 
-    def test_reset(self):
-        self.fsm.trigger_event("timer")
-        self.fsm.trigger_event("timer")
-        self.fsm.reset()
-        self.assertEqual(self.fsm.current_state.name, "Red")
+    # def test_visualize(self):
+    #     dot_output = self.fsm.visualize()
+    #     self.assertIn("Red", dot_output)
+    #     self.assertIn("Green", dot_output)
+    #     self.assertIn("Yellow", dot_output)
 
-    def test_visualize(self):
-        dot_output = self.fsm.visualize()
-        self.assertIn("Red", dot_output)
-        self.assertIn("Green", dot_output)
-        self.assertIn("Yellow", dot_output)
+    # def test_as_markdown(self):
+    #     md_output = self.fsm.as_markdown()
+    #     self.assertIn("| Red | Stop |", md_output)
+    #     self.assertIn("| Green | Go |", md_output)
+    #     self.assertIn("| Yellow | Caution |", md_output)
 
-    def test_as_markdown(self):
-        md_output = self.fsm.as_markdown()
-        self.assertIn("| Red | Stop |", md_output)
-        self.assertIn("| Green | Go |", md_output)
-        self.assertIn("| Yellow | Caution |", md_output)
+    def test_as_table(self):
+        expected_output = (
+            "| State | Output |\n"
+            "|-------|--------|\n"
+            "| Red | Stop |\n"
+            "| Green | Go |\n"
+            "| Yellow | Caution |\n"
+            "\n"
+            "| Source | Latency | Destination |\n"
+            "|--------|---------|-------------|\n"
+            "| Red | 1 | Green |\n"
+            "| Green | 1 | Yellow |\n"
+            "| Yellow | 1 | Red |\n"
+        )
+        md_output = self.fsm.as_table()
+        self.assertEqual(md_output.strip(), expected_output.strip())
 
-def practical_example():
-    fsm = FSM("Traffic Light Controller")
+    def test_history(self):
+        self.fsm.trigger_event("timer", latency=1)
+        self.fsm.trigger_event("timer", latency=1)
+        self.fsm.trigger_event("timer", latency=1)
+        expected_state_history = [
+            (0, "Red", "Stop"),
+            (1, "Red", "Stop"),
+            (2, "Green", "Go"),
+            (3, "Green", "Go"),
+            (4, "Yellow", "Caution"),
+            (5, "Yellow", "Caution"),
+            (6, "Red", "Stop")
+        ]
+        self.assertEqual([(record.clock, record.current_state, record.val) for record in self.fsm.state_history], expected_state_history)
 
-    fsm.add_state("Red", "Stop")
-    fsm.add_state("Green", "Go")
-    fsm.add_state("Yellow", "Caution")
+    def test_practical_example(self):
+        fsm = FSM("Traffic Light Controller")
 
-    fsm.add_transition("Red", "Green", "timer")
-    fsm.add_transition("Green", "Yellow", "timer")
-    fsm.add_transition("Yellow", "Red", "timer")
+        fsm.add_state("Red", "Stop")
+        fsm.add_state("Green", "Go")
+        fsm.add_state("Yellow", "Caution")
 
-    fsm.set_initial_state("Red")
+        fsm.add_transition("Red", "Green", 1)
+        fsm.add_transition("Green", "Yellow", 1)
+        fsm.add_transition("Yellow", "Red", 1)
 
-    # 打印初始状态
-    print(f"Initial State: {fsm.current_state.name} - Output: {fsm.current_state.output}")
+        fsm.set_initial_state("Red")
 
-    # 模拟状态转换
-    events = ["timer", "timer", "timer", "timer", "timer"]
-    for event in events:
-        output = fsm.trigger_event(event)
-        print(f"Event: {event}, New State: {fsm.current_state.name}, Output: {output}")
+        print(f"Initial State: {fsm.current_state.name} - Output: {fsm.current_state.output}")
 
-    # 可视化 FSM
-    print("\nFSM Visualization in DOT format:")
-    print(fsm.visualize())
+        events = ["timer", "timer", "timer", "timer", "timer"]
 
-    # 生成 Markdown 表格
-    print("\nFSM in Markdown format:")
-    print(fsm.as_markdown())
+        expected_results = [
+            ("Green", "Go"),
+            ("Yellow", "Caution"),
+            ("Red", "Stop"),
+            ("Green", "Go"),
+            ("Yellow", "Caution")
+        ]
+
+        for event, expected in zip(events, expected_results):
+            output = fsm.trigger_event(event, latency=1)
+            self.assertEqual((fsm.current_state.name, output), expected)
+            print(f"Event: {event}, New State: {fsm.current_state.name}, Output: {output}")
+
+        fsm.print_history()
+
 
 if __name__ == '__main__':
     unittest.main()
-    practical_example()

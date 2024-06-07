@@ -1,10 +1,9 @@
-# fsm.py
 import logging
-from collections import OrderedDict, namedtuple
+from collections import namedtuple
 
 logging.basicConfig(level=logging.INFO)
 
-state=namedtuple("state","clock current_state val")
+state = namedtuple("state","clock current_state val")
 
 class State:
     def __init__(self, name, output):
@@ -52,7 +51,7 @@ class FSM:
     def trigger_event(self, event, latency):
         for transition in self.transitions:
             if transition.source == self.current_state.name:
-                self.clock+=latency
+                self.clock += latency
                 record = state(self.clock, self.current_state.name, self.current_state.output)
                 self.state_history.append(record)
 
@@ -71,23 +70,23 @@ class FSM:
     #     self.state_history.append(self.current_state.name)
     #     self.logger.info("FSM reset to initial state")
 
-    def visualize(self):
-        dot_repr = "digraph FSM {\n"
-        for state in self.states.values():
-            dot_repr += f'  {state.name} [label="{state.name}\\n{state.output}"];\n'
-        for transition in self.transitions:
-            dot_repr += f'  {transition.source} -> {transition.destination} [label="{transition.latency}"];\n'
-        dot_repr += "}"
-        return dot_repr
+    # def visualize(self):
+    #     dot_repr = "digraph FSM {\n"
+    #     for state in self.states.values():
+    #         dot_repr += f'  {state.name} [label="{state.name}\\n{state.output}"];\n'
+    #     for transition in self.transitions:
+    #         dot_repr += f'  {transition.source} -> {transition.destination} [label="{transition.latency}"];\n'
+    #     dot_repr += "}"
+    #     return dot_repr
 
-    def as_markdown(self):
-        md_repr = "| State | Output |\n|-------|--------|\n"
+    def as_table(self):
+        repr = "| State | Output |\n|-------|--------|\n"
         for state in self.states.values():
-            md_repr += f"| {state.name} | {state.output} |\n"
-        md_repr += "\n| Source | Event | Destination |\n|--------|-------|-------------|\n"
+            repr += f"| {state.name} | {state.output} |\n"
+        repr += "\n| Source | Latency | Destination |\n|--------|---------|-------------|\n"
         for transition in self.transitions:
-            md_repr += f"| {transition.source} | {transition.latency} | {transition.destination} |\n"
-        return md_repr
+            repr += f"| {transition.source} | {transition.latency} | {transition.destination} |\n"
+        return repr
 
     def print_history(self):
         print("State History:")
@@ -116,8 +115,8 @@ print(fsm.trigger_event("timer", latency=1))  # 输出: Caution
 
 # fsm.print_history()
 
-# 以DOT格式可视化
-print(fsm.visualize())
+# # 以DOT格式可视化
+# print(fsm.visualize())
 
 # 以Markdown格式可视化
-print(fsm.as_markdown())
+print(fsm.as_table())
