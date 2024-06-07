@@ -89,11 +89,11 @@ class TestFSM(unittest.TestCase):
         expected_state_history = [
             (0, "Red", "Stop"),
             (1, "Red", "Stop"),
-            (2, "Green", "Go"),
-            (3, "Green", "Go"),
-            (4, "Yellow", "Caution"),
-            (5, "Yellow", "Caution"),
-            (6, "Red", "Stop")
+            (2, "Green1", "Go"),
+            (3, "Green1", "Go"),
+            (4, "Green2", "Go"),
+            (5, "Green2", "Go"),
+            (6, "Green3", "Go")
         ]
         self.assertEqual([(record.clock, record.current_state, record.val) for record in self.fsm.state_history], expected_state_history)
 
