@@ -47,8 +47,7 @@ class TestFSM(unittest.TestCase):
             self.fsm.add_transition("Red", "Blue", 1)
 
     def test_visualize_dot(self):
-        excepted_output = """
-digraph Moore FSM {
+        excepted_output = """digraph Moore FSM {
     Red [label="Output=Stop"];
     Green1 [label="Output=Go"];
     Green2 [label="Output=Go"];
@@ -59,14 +58,12 @@ digraph Moore FSM {
     Green2 -> Green3 [label="Output=Go / Latency=1"];
     Green3 -> Yellow [label="Output=Go / Latency=1"];
     Yellow -> Red [label="Output=Caution / Latency=1"];        
-}
-        """
+}"""
         dot_output = self.fsm.visualize_dot()
         self.assertEqual(dot_output, excepted_output)
 
     def test_visualize_markdown(self):
-        expected_output = """
-| State | Output |
+        expected_output = """| State | Output |
 |-------|--------|
 | Red | Stop |
 | Green1 | Go |
@@ -76,12 +73,12 @@ digraph Moore FSM {
 
 | Source | Destination | Output | Latency |
 |--------|-------------|--------|---------|
-| Red |Green1 | Stop | 1 |
-| Green1 |Green2 | Go | 1 |
-| Green2 |Green3 | Go | 1 |
-| Green3 |Yellow | Go | 1 |
-| Yellow |Red | Caution | 1 |        
-        """
+| Red | Green1 | Stop | 1 |
+| Green1 | Green2 | Go | 1 |
+| Green2 | Green3 | Go | 1 |
+| Green3 | Yellow | Go | 1 |
+| Yellow | Red | Caution | 1 |        
+"""
         md_output = self.fsm.visualize_markdown()
         self.assertEqual(md_output, expected_output)
 
