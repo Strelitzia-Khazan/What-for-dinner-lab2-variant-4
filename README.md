@@ -37,3 +37,29 @@ enough for educational purposes.
 ## Design notes
 
 - ...
+
+## Visualize
+
+- Test Cases
+   - Since there are too few states in the traffic light,
+     there are only three states: red, yellow and green,
+     and the output of each state is different,
+     green 123 is added as an additional state of the green light,
+     similar to the green light countdown,
+     which better shows that the output is independent of the input.
+
+| State | Output |
+|-------|--------|
+|Red    |Stop    |
+|Green1 |Go      |
+|Green2 |Go      |
+|Green3 |Go      |
+|Yellow |Caution |
+
+| Source | Destination | Output | Latency |
+|--------|-------------|--------|---------|
+|Red     |Green1       |Stop    |1        |
+|Green1  |Green2       |Go      |1        |
+|Green2  |Green3       |Go      |1        |
+|Green3  |Yellow       |Go      |1        |
+|Yellow  |Red          |Caution |1        |

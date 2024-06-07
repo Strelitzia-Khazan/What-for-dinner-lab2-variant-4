@@ -1,5 +1,5 @@
 import unittest
-from fsm import FSM, State
+from fsm import FSM
 
 
 class TestFSM(unittest.TestCase):
