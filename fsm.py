@@ -50,8 +50,8 @@ class FSM:
         if name not in self.states:
             raise ValueError(f"State {name} has not been added.")
         self.current_state = self.states[name]
-        record = state(self.clock, 
-                       self.current_state.name, 
+        record = state(self.clock,
+                       self.current_state.name,
                        self.current_state.output)
         self.state_history.append(record)
         self.logger.info(f"Set initial state to {name}")
@@ -60,14 +60,14 @@ class FSM:
         for transition in self.transitions:
             if transition.source == self.current_state.name:
                 self.clock += latency
-                record = state(self.clock, 
-                               self.current_state.name, 
+                record = state(self.clock,
+                               self.current_state.name,
                                self.current_state.output)
                 self.state_history.append(record)
                 self.current_state = self.states[transition.destination]
-                self.clock+=transition.latency
-                record = state(self.clock, 
-                               self.current_state.name, 
+                self.clock += transition.latency
+                record = state(self.clock,
+                               self.current_state.name,
                                self.current_state.output)
                 self.state_history.append(record)
                 self.logger.info(
@@ -87,9 +87,13 @@ class FSM:
             dot_repr += f'    {state_name} [label="Output={state.output}"];\n'
         # Define the transitions with their latencies
         for transition in self.transitions:
+            label_part = (
+                f'Output={transition.output} / '
+                f'Latency={transition.latency}'
+            )
             dot_repr += (
                 f'    {transition.source} -> {transition.destination} '
-                f'[label="Output={transition.output} / Latency={transition.latency}"];\n'
+                f'[label="{label_part}"];\n'
             )
         dot_repr += "}"
         return dot_repr
