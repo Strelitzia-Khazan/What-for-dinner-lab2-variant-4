@@ -36,7 +36,28 @@ enough for educational purposes.
 
 ## Design notes
 
-- ...
+- - State class: 
+  - Represents a state within a Moore finite state machine (FSM).
+  - Attributes:
+    - name: The name of the state.
+    - output: The output associated with the state.
+- Transition class: 
+  - Represents a transition between two states in a finite state machine (FSM).
+  - Attributes:
+    - source: The source state of the transition.
+    - destination: The destination state of the transition.
+    - latency: The delay associated with the state transition.
+- FSM class: 
+  - Represents a transition between two states in a Moore finite state machine (FSM).
+    Manage transitions, states. Generate outputs according to current state.
+  - Attributes:
+    - name: The name of the FSM.
+    - clock: The current clock time.
+    - states: A dictionary storing all states within the FSM.
+    - transitions: A list storing all state transitions within the FSM.
+    - current_state: The current state of the FSM.
+    - state_history: A list recording the history of state changes.
+    - logger: A logger for recording information. 
 
 ## Visualize
 
