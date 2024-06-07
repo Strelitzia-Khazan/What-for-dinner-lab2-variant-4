@@ -96,11 +96,10 @@ class TestFSM(unittest.TestCase):
             (6, "Green3", "Go")
         ]
         self.assertEqual(
-            [(record.clock, record.current_state, record.val) 
-             for record in self.fsm.state_history], 
+            [(record.clock, record.current_state, record.val)
+             for record in self.fsm.state_history],
             expected_state_history
         )
-
 
     def test_practical_example(self):
         fsm = FSM("Traffic Light Controller")
