@@ -30,24 +30,24 @@ enough for educational purposes.
 - 06.06.2022 - 2
   - Add more function of finite state machine.
 - 05.06.2022 - 1
-  - Implement basic function of finite state machine 
+  - Implement basic function of finite state machine
 - 03.06.2022 - 0
   - Initial
 
 ## Design notes
 
-- - State class: 
+- State class:
   - Represents a state within a Moore finite state machine (FSM).
   - Attributes:
     - name: The name of the state.
     - output: The output associated with the state.
-- Transition class: 
+- Transition class:
   - Represents a transition between two states in a finite state machine (FSM).
   - Attributes:
     - source: The source state of the transition.
     - destination: The destination state of the transition.
     - latency: The delay associated with the state transition.
-- FSM class: 
+- FSM class:
   - Represents a transition between two states in a Moore finite state machine (FSM).
     Manage transitions, states. Generate outputs according to current state.
   - Attributes:
@@ -57,17 +57,17 @@ enough for educational purposes.
     - transitions: A list storing all state transitions within the FSM.
     - current_state: The current state of the FSM.
     - state_history: A list recording the history of state changes.
-    - logger: A logger for recording information. 
+    - logger: A logger for recording information.
 
 ## Visualize
 
 - Test Cases
-   - Since there are too few states in the traffic light,
-     there are only three states: red, yellow and green,
-     and the output of each state is different,
-     green 123 is added as an additional state of the green light,
-     similar to the green light countdown,
-     which better shows that the output is independent of the input.
+  - Since there are too few states in the traffic light,
+    there are only three states: red, yellow and green,
+    and the output of each state is different,
+    green 123 is added as an additional state of the green light,
+    similar to the green light countdown,
+    which better shows that the output is independent of the input.
 
 | State | Output |
 |-------|--------|
