@@ -57,7 +57,7 @@ class TestFSM(unittest.TestCase):
     Green1 -> Green2 [label="Output=Go / Latency=1"];
     Green2 -> Green3 [label="Output=Go / Latency=1"];
     Green3 -> Yellow [label="Output=Go / Latency=1"];
-    Yellow -> Red [label="Output=Caution / Latency=1"];        
+    Yellow -> Red [label="Output=Caution / Latency=1"];
 }"""
         dot_output = self.fsm.visualize_dot()
         self.assertEqual(dot_output, excepted_output)
@@ -77,7 +77,7 @@ class TestFSM(unittest.TestCase):
 | Green1 | Green2 | Go | 1 |
 | Green2 | Green3 | Go | 1 |
 | Green3 | Yellow | Go | 1 |
-| Yellow | Red | Caution | 1 |        
+| Yellow | Red | Caution | 1 |
 """
         md_output = self.fsm.visualize_markdown()
         self.assertEqual(md_output, expected_output)
