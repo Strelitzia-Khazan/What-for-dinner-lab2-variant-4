@@ -6,10 +6,14 @@ class TestFSM(unittest.TestCase):
     def setUp(self):
         self.fsm = FSM("Test FSM")
         self.fsm.add_state("Red", "Stop")
-        self.fsm.add_state("Green", "Go")
+        self.fsm.add_state("Green1", "Go")
+        self.fsm.add_state("Green2", "Go")
+        self.fsm.add_state("Green3", "Go")
         self.fsm.add_state("Yellow", "Caution")
-        self.fsm.add_transition("Red", "Green", 1)
-        self.fsm.add_transition("Green", "Yellow", 1)
+        self.fsm.add_transition("Red", "Green1", 1)
+        self.fsm.add_transition("Green1", "Green2", 1)
+        self.fsm.add_transition("Green2", "Green3", 1)
+        self.fsm.add_transition("Green3", "Yellow", 1)
         self.fsm.add_transition("Yellow", "Red", 1)
         self.fsm.set_initial_state("Red")
 
@@ -19,14 +23,20 @@ class TestFSM(unittest.TestCase):
 
     def test_state_transition(self):
         self.assertEqual(self.fsm.trigger_event("timer", latency=1), "Go")
-        self.assertEqual(self.fsm.current_state.name, "Green")
+        self.assertEqual(self.fsm.current_state.name, "Green1")
         self.assertEqual(self.fsm.clock, 2)
+        self.assertEqual(self.fsm.trigger_event("timer", latency=1), "Go")
+        self.assertEqual(self.fsm.current_state.name, "Green2")
+        self.assertEqual(self.fsm.clock, 4)
+        self.assertEqual(self.fsm.trigger_event("timer", latency=1), "Go")
+        self.assertEqual(self.fsm.current_state.name, "Green3")
+        self.assertEqual(self.fsm.clock, 6)
         self.assertEqual(self.fsm.trigger_event("timer", latency=1), "Caution")
         self.assertEqual(self.fsm.current_state.name, "Yellow")
-        self.assertEqual(self.fsm.clock, 4)
+        self.assertEqual(self.fsm.clock, 8)
         self.assertEqual(self.fsm.trigger_event("timer", latency=1), "Stop")
         self.assertEqual(self.fsm.current_state.name, "Red")
-        self.assertEqual(self.fsm.clock, 6)
+        self.assertEqual(self.fsm.clock, 10)
 
     def test_add_duplicate_state(self):
         with self.assertRaises(ValueError):
@@ -36,34 +46,44 @@ class TestFSM(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.fsm.add_transition("Red", "Blue", 1)
 
-    # def test_visualize(self):
-    #     dot_output = self.fsm.visualize()
-    #     self.assertIn("Red", dot_output)
-    #     self.assertIn("Green", dot_output)
-    #     self.assertIn("Yellow", dot_output)
+    def test_visualize_dot(self):
+        excepted_output = """
+        digraph Moore FSM {
+            Red [label="Output=Stop"];
+            Green1 [label="Output=Go"];
+            Green2 [label="Output=Go"];
+            Green3 [label="Output=Go"];
+            Yellow [label="Output=Caution"];
+            Red -> Green1 [label="Output=Stop / Latency=1"];
+            Green1 -> Green2 [label="Output=Go / Latency=1"];
+            Green2 -> Green3 [label="Output=Go / Latency=1"];
+            Green3 -> Yellow [label="Output=Go / Latency=1"];
+            Yellow -> Red [label="Output=Caution / Latency=1"];        
+        }
+        """
+        dot_output = self.fsm.visualize_dot()
+        self.assertEqual(dot_output, excepted_output)
 
-    # def test_as_markdown(self):
-    #     md_output = self.fsm.as_markdown()
-    #     self.assertIn("| Red | Stop |", md_output)
-    #     self.assertIn("| Green | Go |", md_output)
-    #     self.assertIn("| Yellow | Caution |", md_output)
+    def test_visualize_markdown(self):
+        expected_output = """
+        | State | Output |
+        |-------|--------|
+        | Red | Stop |
+        | Green1 | Go |
+        | Green2 | Go |
+        | Green3 | Go |
+        | Yellow | Caution |
 
-    def test_as_table(self):
-        expected_output = (
-            "| State | Output |\n"
-            "|-------|--------|\n"
-            "| Red | Stop |\n"
-            "| Green | Go |\n"
-            "| Yellow | Caution |\n"
-            "\n"
-            "| Source | Latency | Destination |\n"
-            "|--------|---------|-------------|\n"
-            "| Red | 1 | Green |\n"
-            "| Green | 1 | Yellow |\n"
-            "| Yellow | 1 | Red |\n"
-        )
-        md_output = self.fsm.as_table()
-        self.assertEqual(md_output.strip(), expected_output.strip())
+        | Source | Destination | Output | Latency |
+        |--------|-------------|--------|---------|
+        | Red |Green1 | Stop | 1 |
+        | Green1 |Green2 | Go | 1 |
+        | Green2 |Green3 | Go | 1 |
+        | Green3 |Yellow | Go | 1 |
+        | Yellow |Red | Caution | 1 |        
+        """
+        md_output = self.fsm.visualize_markdown()
+        self.assertEqual(md_output, expected_output)
 
     def test_history(self):
         self.fsm.trigger_event("timer", latency=1)
@@ -84,25 +104,31 @@ class TestFSM(unittest.TestCase):
         fsm = FSM("Traffic Light Controller")
 
         fsm.add_state("Red", "Stop")
-        fsm.add_state("Green", "Go")
+        fsm.add_state("Green1", output="Go")
+        fsm.add_state("Green2", output="Go")
+        fsm.add_state("Green3", output="Go")
         fsm.add_state("Yellow", "Caution")
 
-        fsm.add_transition("Red", "Green", 1)
-        fsm.add_transition("Green", "Yellow", 1)
+        fsm.add_transition("Red", "Green1", 1)
+        fsm.add_transition("Green1","Green2", 1)
+        fsm.add_transition("Green2","Green3", 1)
+        fsm.add_transition("Green3", "Yellow", 1)
         fsm.add_transition("Yellow", "Red", 1)
 
         fsm.set_initial_state("Red")
 
         print(f"Initial State: {fsm.current_state.name} - Output: {fsm.current_state.output}")
 
-        events = ["timer", "timer", "timer", "timer", "timer"]
+        events = ["timer", "timer", "timer", "timer", "timer", "timer", "timer"]
 
         expected_results = [
-            ("Green", "Go"),
+            ("Green1", "Go"),
+            ("Green2", "Go"),
+            ("Green3", "Go"),
             ("Yellow", "Caution"),
             ("Red", "Stop"),
-            ("Green", "Go"),
-            ("Yellow", "Caution")
+            ("Green1", "Go"),
+            ("Green2", "Go")
         ]
 
         for event, expected in zip(events, expected_results):
