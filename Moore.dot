@@ -1,0 +1,7 @@
+digraph MooreFSM {
+    Red -> Green1 [label="Output=Stop / Latency=1"];
+    Green1 -> Green2 [label="Output=Go / Latency=1"];
+    Green2 -> Green3 [label="Output=Go / Latency=1"];
+    Green3 -> Yellow [label="Output=Go / Latency=1"];
+    Yellow -> Red [label="Output=Caution / Latency=1"];
+}
